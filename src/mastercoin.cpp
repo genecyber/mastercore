@@ -1409,6 +1409,56 @@ int msc_tx_pop()
   return 0;
 }
 
+// send a MP transaction via RPC - simple send
+Value sendMPsimple(const Array& params, bool fHelp)
+{
+if (fHelp || params.size() != 4)
+        throw runtime_error(
+            "sendMPsimple\n"
+            "\nCreates and broadcasts a simple send for a given amount and currency/property ID.\n"
+            "\nResult:\n"
+            "txid    (string) The transaction ID of the sent transaction\n"
+            "\nExamples:\n"
+            ">mastercored sendMPsimple 1FromAddress 1ToAddress CurrencyID Amount\n"
+        );
+
+  std::string FromAddress = (params[0].get_str());
+  std::string ToAddress = (params[1].get_str());
+  std::string CurrencyIDStr = (params[2].get_str());
+  std::string AmountStr = (params[3].get_str());
+  uint32_t CurrencyID; //convert from CurrencyIDStr
+  double Amount; //convert from AmountStr
+
+  //some sanity checking of the data supplied?
+
+  //create transaction (will internal send function just create, or also feed into signraw and sendraw?)
+  //currencyID will need to be checked for divisibility - handle here or in function?
+  std::string CreatedTXID = "dummy";
+  //std:string CreatedTXID = sendMPsimple(FromAddress, ToAddress, CurrencyID, Amount);
+
+//bitcoin returns a transaction ID or error here for equivalent function (sendtoaddress)
+//trap errors, if successful return transaction ID
+return CreatedTXID; 
+}
+
+// display an MP balance via RPC
+Value getMPbalance(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 2)
+        throw runtime_error(
+            "getMPbalance\n"
+            "\nReturns the Master Protocol balance for a given address and currency/property.\n"
+            "\nResult:\n"
+            "n    (numeric) The applicable balance for address:currency/propertyID pair\n"
+            "\nExamples:\n"
+            ">mastercored getMPbalance 1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P 1\n"
+        );
+    std::string address = (params[0].get_str());
+    //assume MSC for PoC, force currencyID to 1
+    int64_t tmpbal = getMPbalance(address, MASTERCOIN_CURRENCY_MSC);
+    return ValueFromAmount(tmpbal);
+}
+
 // display the tally map & the offer/accept list(s)
 Value mscrpc(const Array& params, bool fHelp)
 {
